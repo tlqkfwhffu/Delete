@@ -1,13 +1,15 @@
+let nickname = localStorage.getItem('nickname') || '';
 const socket = io();
 let currentRoom = null;
 
-let nickname = '';
 function setNickname() {
   const input = document.getElementById('nickname');
 
   nickname = input.value.trim();
 
   if (!nickname) return;
+
+  localStorage.setItem('nickname', nickname);
 
   socket.emit('set_nickname', nickname);
 
@@ -42,6 +44,8 @@ function sendMessage() {
   const input = document.getElementById('input');
   const text = input.value.trim();
   if (!text || !currentRoom) return;
+
+  saveMessage(text, nickname);
 
   socket.emit('message', {
     room: currentRoom,

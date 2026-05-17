@@ -13,6 +13,15 @@
       <div id="status" class="status">서버에 연결 중...</div>
     </div>
 
+    <button onclick="login()" class="google-btn">
+      Google로 로그인
+    </button>
+
+    <div class="nickname-area">
+  <input type="text" id="nickname" placeholder="닉네임 입력">
+  <button onclick="setNickname()">입장</button>
+</div>
+
     <div id="messages" class="messages"></div>
 
     <div class="input-area">
@@ -28,5 +37,45 @@
 
   <script src="/socket.io/socket.io.js"></script>
   <script src="client.js"></script>
+  <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+  import {
+    getAuth,
+    GoogleAuthProvider,
+    signInWithPopup
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDy203zE5wTzy_F8vShubi5cDqmn-dWMLY",
+    authDomain: "delete-e7dab.firebaseapp.com",
+    projectId: "delete-e7dab",
+    storageBucket: "delete-e7dab.firebasestorage.app",
+    messagingSenderId: "814099915759",
+    appId: "1:814099915759:web:c0cfcd2d033c2aa2e64c1a",
+    measurementId: "G-QX4FYSE89W"
+  };
+
+  const app = initializeApp(firebaseConfig);
+
+  const auth = getAuth(app);
+
+  const provider = new GoogleAuthProvider();
+
+  window.login = async function () {
+    try {
+      const result = await signInWithPopup(auth, provider);
+
+      const user = result.user;
+
+      alert(user.displayName + " 로그인 성공");
+
+      console.log(user);
+
+    } catch (error) {
+      console.error(error);
+    }
+  };
+</script>
 </body>
 </html>
