@@ -7,7 +7,25 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <div class="app-container">
+
+  <!-- 왼쪽 사용자 목록 -->
+  <div class="sidebar">
+    <h3>접속 중</h3>
+
+    <div id="user-list"></div>
+  </div>
+
+  <!-- 오른쪽 채팅 -->
   <div class="chat-container">
+
+    <div class="header">
+      <h2>💬 1대1 채팅</h2>
+      <div id="status" class="status">상대방을 기다리는 중...</div>
+    </div>
+
+    <div id="profile" class="profile"></div>
+
     <div class="header">
       <h2>💬 1대1 채팅</h2>
       <div id="status" class="status">서버에 연결 중...</div>
@@ -34,6 +52,8 @@
       <button id="send-btn" onclick="sendMessage()" disabled>전송</button>
     </div>
   </div>
+  
+  </div>
 
   <script src="/socket.io/socket.io.js"></script>
   <script src="client.js"></script>
@@ -45,6 +65,15 @@
     GoogleAuthProvider,
     signInWithPopup
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  
+  import {
+  getFirestore,
+  collection,
+  addDoc,
+  getDocs,
+  query,
+  orderBy
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyDy203zE5wTzy_F8vShubi5cDqmn-dWMLY",
@@ -58,6 +87,8 @@
 
   const app = initializeApp(firebaseConfig);
 
+  const db = getFirestore(app);
+
   const auth = getAuth(app);
 
   const provider = new GoogleAuthProvider();
@@ -70,12 +101,31 @@
 
       alert(user.displayName + " 로그인 성공");
 
+    document.getElementById('profile').innerHTML = `
+      <img src="${user.photoURL}">
+      <div>
+        <div>${user.displayName}</div>
+        <small>${user.email}</small>
+      </div>
+    `;
+
       console.log(user);
 
     } catch (error) {
       console.error(error);
     }
   };
+  window.saveMessage = async function (text, sender) {
+
+  await addDoc(collection(db, "messages"), {
+
+    text,
+    sender,
+    time: Date.now()
+
+  });
+
+};
 </script>
 </body>
 </html>
