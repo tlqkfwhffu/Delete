@@ -1,6 +1,19 @@
 const socket = io();
 let currentRoom = null;
 
+let nickname = '';
+function setNickname() {
+  const input = document.getElementById('nickname');
+
+  nickname = input.value.trim();
+
+  if (!nickname) return;
+
+  socket.emit('set_nickname', nickname);
+
+  input.disabled = true;
+}
+
 // ── 서버 이벤트 수신 ──────────────────────────
 socket.on('waiting', (msg) => {
   setStatus('⏳ ' + msg);
@@ -13,8 +26,8 @@ socket.on('matched', ({ room }) => {
   addMessage('상대방과 연결되었습니다.', 'system');
 });
 
-socket.on('message', ({ text, time }) => {
-  addMessage(text, 'received', time);
+socket.on('message', ({ text, nickname, time }) => {
+  addMessage(`${nickname}: ${text}`, 'received', time);
 });
 
 socket.on('partner_left', (msg) => {
@@ -30,7 +43,11 @@ function sendMessage() {
   const text = input.value.trim();
   if (!text || !currentRoom) return;
 
-  socket.emit('message', { room: currentRoom, text });
+  socket.emit('message', {
+    room: currentRoom,
+    text,
+    nickname
+});
   addMessage(text, 'sent', new Date().toLocaleTimeString('ko-KR'));
   input.value = '';
   input.focus();
