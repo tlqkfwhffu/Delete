@@ -6,54 +6,103 @@
   <title>1대1 채팅</title>
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-  <div class="app-container">
 
-  <!-- 왼쪽 사용자 목록 -->
-  <div class="sidebar">
-    <h3>접속 중</h3>
+  <!-- 로그인 버튼 -->
+  <div id="login-screen">
 
-    <div id="user-list"></div>
-  </div>
+  <div class="login-card">
 
-  <!-- 오른쪽 채팅 -->
-  <div class="chat-container">
+    <h1>로그인</h1>
 
-    <div class="header">
-      <h2>💬 1대1 채팅</h2>
-      <div id="status" class="status">상대방을 기다리는 중...</div>
-    </div>
+    <button onclick="login()" class="google-login-btn">
 
-    <div id="profile" class="profile"></div>
+      <img
+        src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg"
+        width="22"
+      >
 
-    <div class="header">
-      <h2>💬 1대1 채팅</h2>
-      <div id="status" class="status">서버에 연결 중...</div>
-    </div>
-
-    <button onclick="login()" class="google-btn">
       Google로 로그인
+
     </button>
 
-    <div class="nickname-area">
-  <input type="text" id="nickname" placeholder="닉네임 입력">
-  <button onclick="setNickname()">입장</button>
+  </div>
+
 </div>
 
-    <div id="messages" class="messages"></div>
+  </div>
 
-    <div class="input-area">
-      <input
-        type="text"
-        id="input"
-        placeholder="메시지를 입력하세요..."
-        disabled
-      />
-      <button id="send-btn" onclick="sendMessage()" disabled>전송</button>
+  <!-- 앱 -->
+  <div class="app-container" id="app" style="display:none;">
+
+    <!-- 왼쪽 -->
+    <div class="sidebar">
+
+      <h3>접속 중</h3>
+
+      <div id="user-list"></div>
+
     </div>
+
+    <!-- 오른쪽 -->
+    <div class="chat-container">
+
+      <div class="header">
+
+        <h2>💬 1대1 채팅</h2>
+
+        <div id="status" class="status">
+          로그인 필요
+        </div>
+
+      </div>
+
+      <!-- 프로필 -->
+      <div id="profile" class="profile"></div>
+
+      <!-- 닉네임 -->
+      <div id="nickname-box" style="display:none;">
+
+        <input
+          type="text"
+          id="nickname"
+          placeholder="닉네임 입력"
+        >
+
+        <button onclick="setNickname()">
+          입장
+        </button>
+
+      </div>
+
+      <!-- 메시지 -->
+      <div id="messages" class="messages"></div>
+
+      <!-- 입력 -->
+      <div class="input-area">
+
+        <input
+          type="text"
+          id="input"
+          placeholder="메시지를 입력하세요..."
+          disabled
+        >
+
+        <button
+          id="send-btn"
+          onclick="sendMessage()"
+          disabled
+        >
+          전송
+        </button>
+
+      </div>
+
+    </div>
+
   </div>
-  
-  </div>
+</div>
 
   <script src="/socket.io/socket.io.js"></script>
   <script src="client.js"></script>
@@ -100,6 +149,20 @@
       const user = result.user;
 
       alert(user.displayName + " 로그인 성공");
+
+      document.getElementById('login-screen').style.display = 'none';
+      connectSocket();
+
+      document.getElementById('app').style.display = 'flex';
+
+      document.getElementById('nickname-box').style.display = 'flex';
+      
+      const savedNickname = localStorage.getItem('nickname');
+      
+      if (savedNickname) {
+        document.getElementById('nickname').value =
+        savedNickname;
+      }
 
     document.getElementById('profile').innerHTML = `
       <img src="${user.photoURL}">
