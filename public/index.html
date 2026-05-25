@@ -161,6 +161,11 @@
       const result = await signInWithPopup(auth, provider);
 
       const user = result.user;
+      document.getElementById('success-modal').style.display =
+      'flex';
+
+      document.getElementById('success-text').textContent =
+      `${user.displayName}님 로그인되었습니다.`;
       
       await setDoc(doc(db, "users", user.uid), {
       
@@ -169,7 +174,7 @@
       photo: user.photoURL,
       email: user.email
     });
-      alert(user.displayName + " 로그인 성공");
+      
 
       document.getElementById('login-screen').style.display = 'none';
       
@@ -354,6 +359,29 @@ window.saveRoomMessage = async function (
   );
 
 };
+window.closeSuccessModal = function () {
+
+  document.getElementById('success-modal').style.display =
+  'none';
+
+};
 </script>
+<div id="success-modal" class="success-modal">
+
+  <div class="success-box">
+
+    <div class="check-icon">✔</div>
+
+    <h1>로그인 성공!</h1>
+
+    <p id="success-text"></p>
+
+    <button onclick="closeSuccessModal()">
+      OK
+    </button>
+
+  </div>
+
+</div>
 </body>
 </html>

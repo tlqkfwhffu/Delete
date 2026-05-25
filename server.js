@@ -1,3 +1,4 @@
+const users = {};
 const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
@@ -12,6 +13,10 @@ let waitingUser = null;
 
 io.on('connection', (socket) => {
   console.log('🟢 접속:', socket.id);
+  
+  socket.on('set_nickname', (name) => {
+    users[socket.id] = name;
+});
 
   if (waitingUser) {
     const room = `room_${waitingUser.id}_${socket.id}`;
@@ -27,9 +32,10 @@ io.on('connection', (socket) => {
     socket.emit('waiting', '상대방을 기다리는 중...');
   }
 
-  socket.on('message', ({ room, text }) => {
+  socket.on('message', ({ room, text, nickname }) => {
     socket.to(room).emit('message', {
       text,
+      nickname: users[socket.id] || nickname,
       time: new Date().toLocaleTimeString('ko-KR')
     });
   });
